@@ -1,0 +1,30 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const work = [
+  {
+    title: 'FMModTrack',
+    body: 'A free Windows desktop app (built with Xojo) that tracks FileMaker schema modifications, making it easier to review what changed in a solution. Download coming soon.',
+  },
+  {
+    title: 'Order Entry System',
+    body: 'A FileMaker custom app for managing order entry and tracking, built for a small business workflow.',
+  },
+  {
+    title: 'FileMaker + Windows Scripting',
+    body: 'Integration connecting FileMaker to Windows scripting to retrieve and sync folder contents.',
+  },
+];
+---
+
+<Layout title="Work — Jim Paul De Jose">
+  <h1>Selected work</h1>
+  <p>A few representative projects and tools I have built or contributed to.</p>
+
+  {work.map((item) => (
+    <div class="work-item">
+      <h3>{item.title}</h3>
+      <p>{item.body}</p>
+    </div>
+  ))}
+</Layout>

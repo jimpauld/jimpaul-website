@@ -1,0 +1,32 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const bio = `Since 2021 I've been the lead Claris FileMaker developer for a business systems consultancy, building and maintaining FileMaker custom apps and handling data migrations and deployments with the FileMaker Data Migration Tool and OttoFMS. I hold the Claris FileMaker Server Administrator certification and the AI Fundamentals II: Using LLMs in Claris FileMaker Associate certification. My current work spans FileMaker 2026 and AI-assisted development with opencode — using leading open-source models like GLM-5.2, DeepSeek V4 Pro, Kimi K2.7 Code, and Qwen3.7 to keep costs down without sacrificing quality. For sensitive work that can't leave my machine, I run local LLMs through llama.cpp. I also deploy and manage self-hosted infrastructure for clients, including FileMaker Server and n8n, on both Windows and Ubuntu.`;
+
+const howIWork = `I review and validate every AI-generated change before it reaches production. The exact method depends on the work — staging copies and backups for FileMaker, draft-and-test for automation — but the discipline is the same. No vibes.`;
+
+const certs = [
+  'Claris FileMaker Server Administrator',
+  'AI Fundamentals II: Using LLMs in Claris FileMaker',
+  'App Developer for Claris FileMaker Pro',
+  'Developer Essentials for Claris FileMaker',
+];
+---
+
+<Layout title="About — Jim Paul De Jose">
+  <h1>About</h1>
+  <p>{bio}</p>
+
+  <h2>How I work</h2>
+  <p>{howIWork}</p>
+
+  <h2>Certifications</h2>
+  <ul>
+    {certs.map((cert) => <li>{cert}</li>)}
+  </ul>
+
+  <h2>Projects</h2>
+  <p>
+    <strong>FMModTrack</strong> — a free Windows desktop app (built with Xojo) that tracks FileMaker schema modifications, making it easier to review what changed in a solution. Download coming soon.
+  </p>
+</Layout>

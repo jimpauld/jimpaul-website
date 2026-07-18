@@ -1,11 +1,62 @@
 ---
-import Welcome from '../components/Welcome.astro';
 import Layout from '../layouts/Layout.astro';
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+const headline = 'Claris FileMaker Developer | AI-enhanced business systems & self-hosted automation';
+const lead =
+  "Since 2021 I've been the lead Claris FileMaker developer for a business systems consultancy, building and maintaining FileMaker custom apps and handling data migrations and deployments with the FileMaker Data Migration Tool and OttoFMS. I hold the Claris FileMaker Server Administrator certification and the AI Fundamentals II: Using LLMs in Claris FileMaker Associate certification.";
+
+const cards = [
+  {
+    title: 'FileMaker Development',
+    body: 'Custom apps, upgrades to FileMaker 2026, data migrations and deployments (FileMaker Data Migration Tool, OttoFMS).',
+  },
+  {
+    title: 'AI-Enhanced Development',
+    body: 'AI-assisted development with opencode and open-source models (GLM-5.2, DeepSeek V4 Pro, Kimi K2.7 Code, Qwen3.7). Every change reviewed and validated before production.',
+  },
+  {
+    title: 'Self-Hosted Automation',
+    body: 'n8n workflows and self-hosted tooling. Your data stays on infrastructure you control.',
+  },
+];
+
+const work = [
+  {
+    title: 'FMModTrack',
+    body: 'A free Windows desktop app (built with Xojo) that tracks FileMaker schema modifications, making it easier to review what changed in a solution.',
+  },
+  {
+    title: 'Order Entry System',
+    body: 'A FileMaker custom app for managing order entry and tracking, built for a small business workflow.',
+  },
+  {
+    title: 'FileMaker + Windows Scripting',
+    body: 'Integration connecting FileMaker to Windows scripting to retrieve and sync folder contents.',
+  },
+];
 ---
 
-<Layout>
-	<Welcome />
+<Layout title="Jim Paul De Jose — Claris FileMaker Developer">
+  <h1>{headline}</h1>
+  <p class="lead">{lead}</p>
+  <a class="cta" href="/contact">Let's talk</a>
+
+  <h2>What I work on</h2>
+  <div class="cards">
+    {cards.map((card) => (
+      <div class="card">
+        <h3>{card.title}</h3>
+        <p>{card.body}</p>
+      </div>
+    ))}
+  </div>
+
+  <h2>Selected work</h2>
+  {work.map((item) => (
+    <div class="work-item">
+      <h3>{item.title}</h3>
+      <p>{item.body}</p>
+    </div>
+  ))}
+  <p><a href="/work">More about my work &rarr;</a></p>
 </Layout>
