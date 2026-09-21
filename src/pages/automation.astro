@@ -1,0 +1,69 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const tools = [
+  {
+    name: 'Daily Digest Engine',
+    status: 'Live',
+    desc: 'Reads a curated set of news feeds and search queries each morning, ranks and summarises what matters to my work, verifies the facts behind its recommendations, and emails a short brief with next actions. Runs on a self-hosted n8n instance.',
+  },
+  {
+    name: 'FileMaker MCP server',
+    status: 'In progress',
+    desc: 'A Model Context Protocol server that lets AI coding agents inspect and work with FileMaker solutions safely.',
+  },
+];
+
+const principles = [
+  'I build and operate these tools myself, on my own infrastructure.',
+  'They are personal tools: I am the operator and, in most cases, the only user.',
+  'Where a tool connects to a third-party service, it requests the minimum access it needs and nothing more.',
+  'No data handled by these tools is sold, shared, or used to train anything.',
+];
+---
+
+<Layout title="Automation & Integrations - Jim Paul De Jose">
+  <h1>Automation &amp; Integrations</h1>
+
+  <p class="lead">
+    Personal automation and integration tools I build and run on my own self-hosted infrastructure.
+  </p>
+
+  <p>
+    I build these to solve my own daily problems and to stay sharp on self-hosted, AI-assisted
+    workflows. They are not public services: I am the operator and, in most cases, the only user.
+    Some of them connect to third-party APIs, including Google services, to do their work.
+  </p>
+
+  <h2>Tools</h2>
+  <div class="cards">
+    {
+      tools.map((tool) => (
+        <div class="card">
+          <h3>{tool.name}</h3>
+          <p>
+            <strong>{tool.status}</strong>
+          </p>
+          <p>{tool.desc}</p>
+        </div>
+      ))
+    }
+  </div>
+
+  <h2>Principles</h2>
+  <ul>
+    {principles.map((item) => <li>{item}</li>)}
+  </ul>
+
+  <h2>Permissions and data</h2>
+  <p>
+    When one of these tools connects to an external service, it requests the minimum access it
+    needs to do that job. The exact permissions being requested are shown on the service's
+    authorisation screen at the moment you grant them.
+  </p>
+  <p>
+    For tools that connect to Google services, how data is accessed, used, stored and shared is
+    described in the <a href="/privacy">Privacy Policy</a>. The terms these tools are provided
+    under are in the <a href="/terms">Terms of Service</a>.
+  </p>
+</Layout>
