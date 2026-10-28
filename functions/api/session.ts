@@ -21,21 +21,28 @@ export const onRequestPost = async ({ request, env }: { request: Request; env: E
     return Response.json({ error: 'token required' }, { status: 400 });
   }
 
+  if (!env.TURNSTILE_SECRET) {
+    return Response.json({ error: 'missing secret' }, { status: 500 });
+  }
+
   const expectedHostnames = (env.TURNSTILE_HOSTNAMES ?? '')
     .split(',')
     .map((hostname) => hostname.trim().toLowerCase())
     .filter(Boolean);
 
   if (expectedHostnames.length === 0) {
-    return Response.json({ error: 'misconfigured' }, { status: 500 });
+    return Response.json({ error: 'missing hostnames' }, { status: 500 });
   }
+
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 10000);
 
   let verdict: { success: boolean; action?: string; hostname?: string };
   try {
     const response = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
       method: 'POST',
       headers: { 'content-type': 'application/x-www-form-urlencoded' },
-      signal: AbortSignal.timeout(10000),
+      signal: controller.signal,
       body: new URLSearchParams({
         secret: env.TURNSTILE_SECRET,
         response: token,
@@ -43,11 +50,13 @@ export const onRequestPost = async ({ request, env }: { request: Request; env: E
       }),
     });
     if (!response.ok) {
-      return Response.json({ error: 'challenge unavailable' }, { status: 503 });
+      return Response.json({ error: `verify http ${response.status}` }, { status: 502 });
     }
     verdict = await response.json();
   } catch {
-    return Response.json({ error: 'challenge unavailable' }, { status: 503 });
+    return Response.json({ error: 'verify unreachable' }, { status: 502 });
+  } finally {
+    clearTimeout(timer);
   }
 
   if (
