@@ -1,0 +1,168 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ReceptionistWidget from '../components/ReceptionistWidget.astro';
+
+const turnstileSiteKey = '0x4AAAAAAFpVujjoZq3bcV75';
+
+const real = [
+  'The assistant runs on a live n8n workflow with a real language model behind it.',
+  'Answers are grounded in a fixed knowledge base for the fictional company, not free invention.',
+  'A completed booking produces a structured lead and sends a real email notification.',
+  'The page is protected by Cloudflare Turnstile, a rate limit, and a server-side proxy that hides the workflow endpoint.',
+];
+
+const simulated = [
+  'Northgate Heating & Air does not exist. The phone number is a reserved fictional number.',
+  'The three appointment windows are fixed strings, not live calendar availability.',
+  'Leads are logged to a sandbox table. In a real build they go to FileMaker, a CRM, or your calendar.',
+  'No payment is taken and no real appointment is created.',
+];
+
+const steps = [
+  {
+    title: 'Answers from a fixed knowledge base',
+    body: 'Hours, services, the service area and the diagnostic fee come from one block of text. The assistant is instructed not to add facts, estimate prices, or invent availability.',
+  },
+  {
+    title: 'Qualifies the job',
+    body: 'It collects name, callback number, address, the problem in the customer\u2019s words, and a preferred window, then reads the number back for confirmation.',
+  },
+  {
+    title: 'Hands off correctly',
+    body: 'Gas smell, a carbon-monoxide alarm, no heat in freezing weather, or an active leak route straight to the emergency line, and the lead is flagged urgent.',
+  },
+  {
+    title: 'Files the lead',
+    body: 'One structured record lands in a data table and one email arrives, so nothing depends on somebody reading a chat window later.',
+  },
+];
+---
+
+<Layout title="AI Receptionist Demo — Jim Paul De Jose">
+  <h1>AI receptionist demo</h1>
+
+  <p class="lead">
+    Northgate Heating &amp; Air is a fictional HVAC company in Portland, Oregon. This is the
+    receptionist it would use. Ask it for a booking and see what happens.
+  </p>
+
+  <p>
+    This is the <strong>web-chat build</strong>. Phone builds run the same workflow behind a voice
+    platform such as Vapi or Retell, so the part that answers, qualifies and files the lead does not
+    change.
+  </p>
+
+  <ReceptionistWidget siteKey={turnstileSiteKey} />
+
+  <p class="demo-note">
+    Demo only. Do not enter real personal, medical or payment information. A message you send here is
+    processed by a language model to generate a reply.
+  </p>
+
+  <h2>What it is doing</h2>
+  <div class="cards">
+    {
+      steps.map((step) => (
+        <div class="card">
+          <h3>{step.title}</h3>
+          <p>{step.body}</p>
+        </div>
+      ))
+    }
+  </div>
+
+  <h2>What is real, and what is not</h2>
+  <p>
+    A demo that pretends is worth nothing, so here is the split.
+  </p>
+
+  <h3>Real</h3>
+  <ul>
+    {real.map((item) => <li>{item}</li>)}
+  </ul>
+
+  <h3>Simulated</h3>
+  <ul>
+    {simulated.map((item) => <li>{item}</li>)}
+  </ul>
+
+  <h2>What it costs to have one</h2>
+  <p>
+    The package is deliberately small: one workflow, one knowledge base, one place for leads to land,
+    and a handover so you can run it without me.
+  </p>
+
+  <div class="pricing">
+    <div class="price-block">
+      <p class="price-label">Build</p>
+      <p class="price-value">$750 &ndash; $1,500</p>
+      <p class="price-detail">
+        Scoped by channel and integrations. Includes the knowledge base, the qualification rules, the
+        lead destination, and testing against real conversations.
+      </p>
+    </div>
+    <div class="price-block">
+      <p class="price-label">Hosting and maintenance</p>
+      <p class="price-value">$99 &ndash; $199 / month</p>
+      <p class="price-detail">
+        Running, monitoring, prompt and knowledge-base updates, and a monthly review of what customers
+        actually asked.
+      </p>
+    </div>
+  </div>
+
+  <p>
+    Where it writes is the part that matters. A receptionist that logs a lead into a chat window is a
+    chatbot. One that writes into your FileMaker system, your CRM, or your calendar is a front desk.
+    That integration is the work I do.
+  </p>
+
+  <h2>How it is built</h2>
+  <p>
+    The conversation runs as an n8n workflow on a self-hosted instance. This page talks to it through a
+    Cloudflare Pages Function that verifies a Turnstile challenge, rate-limits abuse, and keeps the
+    workflow endpoint out of the page source. Leads land in a data table and arrive by email.
+  </p>
+
+  <p>
+    If you want one for your business, or want to talk about wiring it into a system you already run,
+    <a href="/contact">get in touch</a>.
+  </p>
+</Layout>
+
+<style>
+  .demo-note {
+    font-size: 0.85rem;
+    color: #6b7280;
+    margin-top: 0.75rem;
+  }
+  .pricing {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+  .price-block {
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 1.25rem;
+    background: #f9fafb;
+  }
+  .price-label {
+    font-size: 0.8rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #6b7280;
+    margin: 0 0 0.35rem;
+  }
+  .price-value {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #111827;
+    margin: 0 0 0.5rem;
+  }
+  .price-detail {
+    font-size: 0.9rem;
+    margin: 0;
+  }
+</style>

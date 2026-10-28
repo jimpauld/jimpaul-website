@@ -105,30 +105,15 @@ Step-by-step for a first-time Astro user on Windows 11. Estimated 3–4 hours wi
 - [x] Ran `npm run build` → 5 static pages generated in `dist/` (index, about, work, contact, blog). Output mode: static. Build succeeded.
 
 ### Step 2.5 — Push to GitHub
-- [ ] If the create-astro wizard already ran `git init`, skip the init step.
-- [ ] Create a GitHub repo (browser: https://repo.new, or `gh repo create`).
-- [ ] Push:
-  ```powershell
-  git add .
-  git commit -m "Initial Astro site: Home, About, Contact, stubbed blog"
-  git remote add origin https://github.com/<your-username>/jimpaul-website.git
-  git branch -M main
-  git push -u origin main
-  ```
-  (Ask before committing — per global AGENTS.md, never commit unless explicitly asked.)
+- [x] Git initialized by create-astro wizard. Branch renamed to `main`.
+- [x] GitHub repo created by user: https://github.com/jimpauld/jimpaul-website.git (public).
+- [x] Initial commit: "Initial Astro site: Home, About, Work, Contact, stubbed Blog + project docs" (12 files, 904 insertions).
+- [x] Pushed to origin/main. (Resolved a credentials issue: git was authenticated as `fxp-jim` instead of `jimpauld` — user cleared the Windows Credential Manager `git:https://github.com` entry, then push succeeded.)
 
 ### Step 2.6 — Connect Cloudflare Pages
-- [ ] Cloudflare Dashboard → Workers & Pages → Create application → Pages tab → **Connect to Git** (the button was renamed from "Import an existing Git repository" in 2026).
-- [ ] Connect GitHub, select `jimpaul-website`.
-- [ ] Configure: project name = `jimpaul-website`; production branch = `main`; build command = `npm run build`; build output directory = `dist`. (Cloudflare has an Astro preset that may auto-fill these.)
-- [ ] Save and Deploy. Wait for the first build to succeed.
-- [ ] Note the `*.pages.dev` URL — the site is now live on that URL.
-
-**Alternative (faster 2026 path):** Instead of steps 2.5 + 2.6, use the Cloudflare C3 CLI which scaffolds + deploys in one command:
-```powershell
-npm create cloudflare@latest jimpaul-website -- --framework=astro
-```
-This auto-detects Astro, sets build command + output dir, and deploys immediately. Pick either path — the manual dashboard flow gives you more control; C3 is faster.
+- [x] Cloudflare Dashboard → Workers & Pages → Create → Pages → Connect to Git → selected `jimpaul-website`.
+- [x] Configured: project name `jimpaul-website`, production branch `main`, build command `npm run build`, output dir `dist`.
+- [x] First build succeeded. Site live at https://jimpaul-website.pages.dev/ (confirmed by user).
 
 ### Step 2.7 — Migrate jimpaul.net from Google Sites to Cloudflare Pages
 
@@ -137,54 +122,37 @@ This auto-detects Astro, sets build command + output dir, and deploys immediatel
 **Before you start:** Confirm the Astro site is deployed and working at `https://<project>.pages.dev`. Do not migrate DNS until the Pages site loads.
 
 **Step 2.7.1 — Remove the custom domain mapping in Google Sites**
-- [ ] Google Sites → open your site → Settings (gear) → Custom domains.
-- [ ] Find the `www.jimpaul.net` (or `jimpaul.net`) entry → trash icon → Delete.
-- [ ] This tells Google to stop expecting traffic at that domain. It does NOT touch DNS records.
+- [x] Google Sites → Settings → Custom domains → deleted the `www.jimpaul.net` mapping.
 
 **Step 2.7.2 — Delete the Google-related DNS records in Cloudflare**
-- [ ] Cloudflare dashboard → your zone (jimpaul.net) → DNS → Records.
-- [ ] Screenshot/note all current records first (backup).
-- [ ] Delete: CNAME `www` → `ghs.googlehosted.com` (this is what points www to Google Sites).
-- [ ] Delete: TXT `@` → `google-site-verification=...` (optional — keep if you use Google Search Console for SEO).
-- [ ] Delete: any A/AAAA records for `@` pointing to Google IPs or redirect services (e.g., 192.0.2.1, 174.129.25.170).
-- [ ] **Do NOT delete MX records** if you use email on this domain. Do NOT delete the zone itself.
+- [x] Cloudflare DNS → Records → deleted Google CNAME/A/TXT records. MX records preserved (email forwarding still works).
 
 **Step 2.7.3 — Add the custom domain in Cloudflare Pages**
-- [ ] Cloudflare dashboard → Workers & Pages → your Astro project → Custom domains → Set up a domain.
-- [ ] Enter `jimpaul.net` (the apex, not www) → Continue.
-- [ ] Because jimpaul.net is already a Cloudflare zone, Pages **auto-creates a CNAME** record `jimpaul.net` → `<project>.pages.dev` with the proxy (orange cloud) enabled. Verify it appears in DNS → Records.
-- [ ] Wait for SSL certificate provisioning (~5 minutes).
+- [x] Pages → Custom domains → added `jimpaul.net`. Cloudflare auto-created the CNAME `jimpaul.net` → `jimpaul-website.pages.dev` (proxied, orange cloud). SSL certificate active.
 
 **Step 2.7.4 — Set up www redirect (recommended)**
-- [ ] Option A (simpler): Cloudflare → Rules → Page Rules → create: URL pattern `www.jimpaul.net/*` → Forwarding URL `301` → `https://jimpaul.net/$1`.
-- [ ] Option B: In Pages → Custom domains → add `www.jimpaul.net` as a second custom domain (auto-creates the www CNAME).
+- [x] Cloudflare → Rules → Page Rules → `www.jimpaul.net/*` → Forwarding URL 301 → `https://jimpaul.net/$1`. Confirmed working.
 
 **Step 2.7.5 — Configure SSL/TLS**
-- [ ] Cloudflare → SSL/TLS → Overview → set mode to **Full (strict)**.
-- [ ] Enable **Always Use HTTPS** and **Automatic HTTPS Rewrites** on the same page.
-- [ ] If you get 525/526 errors, drop to **Full** temporarily.
+- [x] SSL/TLS → Overview → set to **Full (strict)**.
+- [x] SSL/TLS → Edge Certificates → enabled **Always Use HTTPS**. (Note: in the 2026 Cloudflare UI, "Automatic HTTPS Rewrites" is no longer a separate toggle — it's rolled into Always Use HTTPS.)
 
 **Step 2.7.6 — Verify**
-- [ ] Visit `https://jimpaul.net` in incognito → new Astro site loads with valid SSL.
-- [ ] Visit `https://www.jimpaul.net` → redirects to bare domain (if configured).
-- [ ] Run `nslookup jimpaul.net` → resolves to Cloudflare IPs.
-- [ ] Test email if applicable (MX records were preserved).
+- [x] `https://jimpaul.net` loads the new Astro site with valid SSL.
+- [x] `https://www.jimpaul.net` redirects to the bare domain.
+- [x] `nslookup jimpaul.net` → resolves to Cloudflare IPs (104.21.22.120, 172.67.204.204, plus IPv6).
+- [x] Email forwarding (support@jimpaul.net → dejosejimpaul@gmail.com) still works.
 
-**Step 2.7.7 — Cleanup (2–4 weeks later)**
-- [ ] After confirming the new site is stable, unpublish or delete the old Google Site (Settings → Publish → Unpublish, or Settings → Remove site). The old site remains reachable at `sites.google.com/view/<sitename>` in the meantime.
+**Step 2.7.7 — Cleanup**
+- [x] Old Google Site unpublished (done immediately rather than waiting 2–4 weeks — user's call).
 
-**Gotchas:**
-- **Proxy status matters:** Google Sites needed DNS-only (grey cloud); Cloudflare Pages needs proxied (orange cloud). Pages auto-creates it proxied — do NOT switch it to grey or you'll get 522 errors.
-- **SSL/TLS mode:** may be set to Flexible from the Google Sites era — must be Full or Full (strict) for Pages.
-- **Google Sites may remember the mapping for up to 48 hours** after you delete it — that's why you remove it in Sites settings (2.7.1) before touching DNS.
-- **CAA records:** if you have CAA records restricting certificate issuance, add `letsencrypt.org` and `pki.goog` or Cloudflare can't provision SSL.
-- **Cache:** purge everything in Cloudflare → Caching after migration; old Google assets may linger at the edge for up to a week.
-
-**Build budget note:** Free tier = 500 builds/month. To avoid burning builds on docs-only changes, add `[Skip CI]` to commit messages for documentation-only commits.
+**Gotchas encountered:**
+- **SSL/TLS mode:** had to switch from the Google Sites era setting to Full (strict).
+- **Always Use HTTPS location:** in the 2026 Cloudflare UI, it's under SSL/TLS → Edge Certificates, not on the Overview page. "Automatic HTTPS Rewrites" is no longer a separate toggle.
 
 ### Step 2.8 — Move these docs into the repo
 - [x] Copied `AGENTS.md`, `action-plan.md`, `progress.md`, `README.md` into the `jimpaul-website/` folder. Removed scaffold's `CLAUDE.md` to keep `AGENTS.md` as the single source of truth. Repo root is now `jimpaul-website/`.
-- [ ] Commit and push so they live with the code (pending Step 2.5 — needs GitHub repo).
+- [x] Committed and pushed to https://github.com/jimpauld/jimpaul-website.git (public repo, public docs).
 
 ---
 
@@ -219,3 +187,36 @@ Scope note: a read-only MCP server (schema discovery + record queries) is ~1–2
 - [ ] Write mini blog posts (even 300 words) as you learn — rambles are fine.
 - [ ] Keep all 3 surfaces aligned to the canonical copy in this file.
 - [ ] Update `progress.md` after every session.
+
+---
+
+## Blog writing workflow
+
+Posts live at `src/pages/blog/<slug>.md` with frontmatter. Publishing is **always human-reviewed** — nothing reaches `main` without a person reading it first. No external skill is required.
+
+1. **Draft** — produced by the n8n **Digest Engine - Publish** workflow from the week's digest archive and opened as a **draft pull request** on this repo. The draft arrives as a complete, publishable post, with inline HTML-commented guidance at every spot that benefits from the author's own words, and the PR body lists the three angles the workflow considered.
+2. **Review** — read it aloud. Revert any sentence that sounds like AI wrote it. Keep 2–3 imperfect phrases; that is what sounds human.
+3. **Edit** — answer or delete the commented guidance, then flip `draft: true` to `false` in the frontmatter when happy.
+4. **Merge and deploy** — merging to `main` triggers Cloudflare Pages, which deploys in ~1–2 minutes.
+
+**Why the human step is non-negotiable:** an April 2026 Berkeley study found AI editing drifts prose toward formal and impersonal even with "preserve voice" prompts. A person reading and editing before merge is the control.
+
+**Content constraint:** posts must be original and experience-grounded, never summaries of other people's news. Google's August 2026 spam update specifically targets scaled, machine-generated content, and this domain's trust is an asset worth protecting.
+
+First post: the story of building the digest engine itself.
+
+---
+
+## AI receptionist demo (added 2026-10-28)
+
+Public demo at `/ai-receptionist`, backed by a live n8n workflow. Published after human review, like any post.
+
+- [x] n8n workflows built and published (`AI Receptionist - Demo`, `Receptionist - Save Lead`)
+- [x] Turnstile widget created; `www` → apex 301 redirect deployed
+- [x] Pages Function proxy (`/api/session`, `/api/chat`) with action + hostname validation
+- [x] Demo page, blog post, canonical tags, `site` set in `astro.config.mjs`
+- [ ] Add Pages env vars: `TURNSTILE_SECRET`, `N8N_CHAT_WEBHOOK`, `TURNSTILE_HOSTNAMES`
+- [ ] Commit and push (human approval), then verify on jimpaul.net
+- [ ] Add the Cloudflare WAF rate-limit rule on `/api/chat` (20 requests/minute per IP)
+- [ ] Kill-switch test: unpublish the workflow, confirm the widget fails readably, republish
+- [ ] Delete the two test rows in `receptionist_leads`

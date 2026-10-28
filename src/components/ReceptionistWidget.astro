@@ -1,0 +1,132 @@
+---
+interface Props {
+  siteKey: string;
+}
+
+const { siteKey } = Astro.props;
+---
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@n8n/chat/dist/style.css" />
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" async defer></script>
+
+<div class="chat-frame" id="receptionist-chat">
+  <p class="chat-status" data-chat-status>Starting the demo receptionist…</p>
+  <div class="turnstile-slot" data-turnstile></div>
+</div>
+
+<script define:vars={{ siteKey }} is:inline>
+  const frame = document.getElementById('receptionist-chat');
+  const status = document.querySelector('[data-chat-status]');
+  const slot = document.querySelector('[data-turnstile]');
+
+  function setStatus(text) {
+    if (status) status.textContent = text;
+    status?.toggleAttribute('hidden', text === '');
+  }
+
+  function waitForTurnstile() {
+    return new Promise((resolve, reject) => {
+      let tries = 0;
+      const timer = setInterval(() => {
+        tries += 1;
+        if (window.turnstile) {
+          clearInterval(timer);
+          resolve(window.turnstile);
+        } else if (tries > 100) {
+          clearInterval(timer);
+          reject(new Error('turnstile unavailable'));
+        }
+      }, 100);
+    });
+  }
+
+  async function obtainPass(turnstile) {
+    const token = await new Promise((resolve, reject) => {
+      turnstile.render(slot, {
+        sitekey: siteKey,
+        action: 'receptionist',
+        appearance: 'interaction-only',
+        callback: resolve,
+        'error-callback': () => reject(new Error('challenge error')),
+        'timeout-callback': () => reject(new Error('challenge timeout')),
+      });
+    });
+
+    const response = await fetch('/api/session', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ token }),
+    });
+
+    if (!response.ok) throw new Error('challenge rejected');
+    const { pass } = await response.json();
+    return pass;
+  }
+
+  async function startChat(pass) {
+    const { createChat } = await import('https://cdn.jsdelivr.net/npm/@n8n/chat/dist/chat.bundle.es.js');
+    createChat({
+      webhookUrl: '/api/chat',
+      target: '#receptionist-chat',
+      mode: 'fullscreen',
+      showWelcomeScreen: false,
+      initialMessages: ['Hi, this is Northgate Heating & Air. How can I help with your heating or cooling today?'],
+      metadata: { demoPass: pass },
+      i18n: {
+        en: {
+          title: 'Northgate Heating & Air',
+          subtitle: 'Demo receptionist, web chat build',
+          getStarted: 'New conversation',
+          inputPlaceholder: 'Type your message…',
+        },
+      },
+    });
+  }
+
+  (async () => {
+    try {
+      const turnstile = await waitForTurnstile();
+      setStatus('Checking your browser…');
+      const pass = await obtainPass(turnstile);
+      setStatus('');
+      await startChat(pass);
+      frame?.classList.add('is-ready');
+    } catch {
+      setStatus('The demo could not start. Reload the page to try again.');
+    }
+  })();
+</script>
+
+<style>
+  .chat-frame {
+    position: relative;
+    height: 560px;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #ffffff;
+  }
+  .chat-status {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 1.5rem;
+    text-align: center;
+    color: #6b7280;
+    font-size: 0.95rem;
+  }
+  .turnstile-slot {
+    position: absolute;
+    inset: auto 0 0 0;
+    display: flex;
+    justify-content: center;
+  }
+  @media (max-width: 600px) {
+    .chat-frame {
+      height: 480px;
+    }
+  }
+</style>
