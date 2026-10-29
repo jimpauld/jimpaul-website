@@ -42,10 +42,20 @@ export const onRequestPost = async ({ request, env }: { request: Request; env: E
     body: JSON.stringify(payload),
   });
 
+  const contentType = upstream.headers.get('content-type') ?? '';
+
+  if (!upstream.ok || !contentType.includes('application/json')) {
+    return Response.json(
+      {
+        output:
+          'The demo receptionist is offline right now. Please try again in a few minutes.',
+      },
+      { status: 200, headers: { 'x-demo-degraded': '1' } },
+    );
+  }
+
   return new Response(upstream.body, {
     status: upstream.status,
-    headers: {
-      'content-type': upstream.headers.get('content-type') ?? 'application/json',
-    },
+    headers: { 'content-type': contentType },
   });
 };

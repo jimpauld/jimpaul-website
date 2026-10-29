@@ -401,3 +401,11 @@ pm run build passes; 10 pages generated.
 - Cloudflare Pages still needs TURNSTILE_SECRET, N8N_CHAT_WEBHOOK, and TURNSTILE_HOSTNAMES (jimpaul.net).
 - Nothing committed: commit and push need Jim's approval.
 - Remaining after deploy: WAF rate-limit rule, kill-switch test, delete the two test rows in the data table.
+
+### Deploy log (2026-10-28, same session)
+- Committed and pushed: d2312ca (demo page, Functions, blog post), fec23c5 (portable Turnstile verify).
+- Live at https://jimpaul.net/ai-receptionist/ (200). Blog lists the post.
+- Pages variables: TURNSTILE_SECRET (Secret), N8N_CHAT_WEBHOOK, TURNSTILE_HOSTNAMES - all Production scope, after a retry deployment.
+- Verified live: /api/session rejects a bogus token with 403 challenge failed; /api/chat with a forged pass returns 403; a valid pass returns a real workflow reply; the n8n host does not appear in page source.
+- Fixed during deploy: AbortSignal.timeout is unsupported at the project's compatibility date and broke siteverify. Replaced with AbortController plus setTimeout.
+- Still open: in-browser Turnstile round trip, WAF rate-limit rule, kill-switch test, delete test rows in receptionist_leads.
